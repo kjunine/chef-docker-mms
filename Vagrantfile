@@ -31,6 +31,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # any other machines on the same network, but cannot be accessed (through this
   # network interface) by any external networks.
   config.vm.network :private_network, type: "dhcp"
+  config.vm.network "forwarded_port", guest: 2375, host: 2375
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
@@ -74,15 +75,17 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provision :chef_solo do |chef|
     chef.json = {
-      mysql: {
-        server_root_password: 'rootpass',
-        server_debian_password: 'debpass',
-        server_repl_password: 'replpass'
+      "docker" => {
+        "host" => [
+          "unix:///var/run/docker.sock",
+          "tcp://0.0.0.0:2375"
+        ]
       }
     }
-
     chef.run_list = [
-        "recipe[docker-mms::default]"
+      "recipe[docker]",
+      "recipe[docker-mms::default]",
+      "recipe[docker-mms::install]"
     ]
   end
 end

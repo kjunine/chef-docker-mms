@@ -24,12 +24,22 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-docker_image 'kjunine/mms-monitoring-agent' do
-  tag 'latest'
-  action :pull
+docker_container 'monitoring-agent' do
+  image 'kjunine/mms-monitoring-agent:latest'
+  container_name 'monitoring-agent'
+  detach true
+  env [
+    "MMS_API_KEY=#{node['mms']['api']['key']}"
+  ]
+  action :run
 end
 
-docker_image 'kjunine/mms-backup-agent' do
-  tag 'latest'
-  action :pull
+docker_container 'backup-agent' do
+  image 'kjunine/mms-backup-agent:latest'
+  container_name 'backup-agent'
+  detach true
+  env [
+    "MMS_API_KEY=#{node['mms']['api']['key']}"
+  ]
+  action :run
 end
