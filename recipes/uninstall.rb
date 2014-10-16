@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: docker-mms
-# Recipe:: default
+# Recipe:: uninstall
 #
 # Copyright (C) 2014 Daniel Ku
 #
@@ -24,14 +24,18 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-docker_image 'kjunine/mms-monitoring-agent' do
-  tag 'latest'
-  cmd_timeout 600
-  action :pull
+docker_container 'monitoring-agent' do
+  action :stop
 end
 
-docker_image 'kjunine/mms-backup-agent' do
-  tag 'latest'
-  cmd_timeout 600
-  action :pull
+docker_container 'monitoring-agent' do
+  action :remove
+end
+
+docker_container 'backup-agent' do
+  action :stop
+end
+
+docker_container 'backup-agent' do
+  action :remove
 end

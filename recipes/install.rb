@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: docker-mms
-# Recipe:: default
+# Recipe:: install
 #
 # Copyright (C) 2014 Daniel Ku
 #
@@ -24,12 +24,15 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+mms = Chef::EncryptedDataBagItem.load "secrets", "mms"
+api_key = mms['api_key']
+
 docker_container 'monitoring-agent' do
   image 'kjunine/mms-monitoring-agent:latest'
   container_name 'monitoring-agent'
   detach true
   env [
-    "MMS_API_KEY=#{node['mms']['api']['key']}"
+    "MMS_API_KEY=#{api_key}"
   ]
   action :run
 end
@@ -39,7 +42,7 @@ docker_container 'backup-agent' do
   container_name 'backup-agent'
   detach true
   env [
-    "MMS_API_KEY=#{node['mms']['api']['key']}"
+    "MMS_API_KEY=#{api_key}"
   ]
   action :run
 end
